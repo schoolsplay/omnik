@@ -31,4 +31,4 @@ Peak output: %s W
 
 """ % (row['stamp'].split('.')[0], row['EToday'], row['ETotal'], row1['stamp'].split('.')[0], row1['PAC1'])
 
-print mesg
+print(mesg)

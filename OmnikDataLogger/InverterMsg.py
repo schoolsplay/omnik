@@ -70,7 +70,7 @@ class InverterMsg(object):
     @property
     def power(self):
         """Power output"""
-        print self.__get_short(59)
+        print(self.__get_short(59))
 
     @property
     def e_total(self):
@@ -89,7 +89,7 @@ class InverterMsg(object):
         Returns:
             float: PV voltage of channel i
         """
-        if i not in range(1, 4):
+        if i not in list(range(1, 4)):
             i = 1
         num = 33 + (i - 1) * 2
         return self.__get_short(num)
@@ -106,7 +106,7 @@ class InverterMsg(object):
         Returns:
             float: PV current of channel i
         """
-        if i not in range(1, 4):
+        if i not in list(range(1, 4)):
             i = 1
         num = 39 + (i - 1) * 2
         return self.__get_short(num)
@@ -124,7 +124,7 @@ class InverterMsg(object):
             float: AC current of channel i
 
         """
-        if i not in range(1, 4):
+        if i not in list(range(1, 4)):
             i = 1
         num = 45 + (i - 1) * 2
         return self.__get_short(num)
@@ -141,7 +141,7 @@ class InverterMsg(object):
         Returns:
             float: AC voltage of channel i
         """
-        if i not in range(1, 4):
+        if i not in list(range(1, 4)):
             i = 1
         num = 51 + (i - 1) * 2
         return self.__get_short(num)
@@ -158,7 +158,7 @@ class InverterMsg(object):
         Returns:
             float: AC frequency of channel i
         """
-        if i not in range(1, 4):
+        if i not in list(range(1, 4)):
             i = 1
         num = 57 + (i - 1) * 4
         return self.__get_short(num, 100)
@@ -175,7 +175,7 @@ class InverterMsg(object):
         Returns:
             float: Power output of channel i
         """
-        if i not in range(1, 4):
+        if i not in list(range(1, 4)):
             i = 1
         num = 59 + (i - 1) * 4
         return int(self.__get_short(num, 1))  # Don't divide

@@ -1,7 +1,7 @@
 from OmnikDataLogger import PluginLoader
 import datetime
-import urllib
-import urllib2
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 
 class PVoutputOutput(PluginLoader.Plugin):
@@ -43,9 +43,9 @@ class PVoutputOutput(PluginLoader.Plugin):
                 'v6': msg.v_pv(1)
             }
 
-        get_data_encoded = urllib.urlencode(get_data)
+        get_data_encoded = urlencode(get_data)
 
-        request_object = urllib2.Request(url + '?' + get_data_encoded)
-        response = urllib2.urlopen(request_object)
+        request_object = Request(url + '?' + get_data_encoded)
+        response = urlopen(request_object)
 
         self.logger.info(response.read())  # Show the response

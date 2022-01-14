@@ -41,12 +41,12 @@ class DBW:
         result = True
         try:
             self.c.execute('''DELETE FROM %s ''' % tname)
-        except sqlite3.OperationalError, e:
+        except sqlite3.OperationalError as e:
             self.logger.warning("No table found: %s" % e)
             result = False
         try:
             self.c.execute('''DELETE FROM sqlite_sequence WHERE name = '%s';''' % tname)
-        except sqlite3.OperationalError, e:
+        except sqlite3.OperationalError as e:
             # self.logger.info("No table found: %s" % e)
             # result = False
             pass
@@ -85,13 +85,13 @@ class DBW:
     def add_row(self, tname, vallist, commit=True):
         """Insert a row with values into table 'tname'.
         vallist must be in the same sequence as the table cols"""
-        s = u'INSERT INTO {0:s} values'.format(tname)
+        s = 'INSERT INTO {0:s} values'.format(tname)
         qs = ['?'] * len(vallist)
         qs = ",".join(qs)
 
         try:
             self.c.execute('''%s (%s)''' % (s, qs), vallist)
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Failed to add row: %s" % e)
             # print '''%s (%s)''' % (s, qs)
             # print "vallist", vallist
@@ -105,7 +105,7 @@ class DBW:
         """Insert a row with values into table 'tname'.
         When the row exists it will be replaced with the new values.
         vallist must be in the same sequence as the table cols"""
-        s = u'REPLACE INTO {0:s} values'.format(tname)
+        s = 'REPLACE INTO {0:s} values'.format(tname)
         qs = ['?'] * len(vallist)
         qs = ",".join(qs)
         self.c.execute('''%s (%s)''' % (s, qs), vallist)
@@ -158,7 +158,7 @@ class DBW:
         """Simple select.
         It just does 'SELECT * FROM tname.
         """
-        s = u'SELECT * FROM {0:s}'.format(tname)
+        s = 'SELECT * FROM {0:s}'.format(tname)
         # print s, val
         self.c.execute(s)
         return self.c.fetchall()
@@ -167,7 +167,7 @@ class DBW:
         """Must always be called to store stuff into dbase"""
         try:
             self.conn.commit()
-        except sqlite3.Error, info:
+        except sqlite3.Error as info:
             self.logger.error("Failed to commit dabse, rollback: %s" % info)
             self.conn.rollback()
             return {'mesg': "Failed to commit dbase, rollback: %s" % info, 'id': None}

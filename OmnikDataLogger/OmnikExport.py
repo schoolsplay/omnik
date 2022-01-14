@@ -4,15 +4,16 @@
 Get data from an omniksol inverter with 602xxxxx - 606xxxx ans save the data in
 a database or push to pvoutput.org.
 """
+import codecs
 import socket  # Needed for talking to inverter
 import sys
 import logging
 import logging.config
-import ConfigParser
+import configparser
 import optparse
 import os
-from PluginLoader import Plugin
-import InverterMsg  # Import the Msg handler
+from .PluginLoader import Plugin
+from . import InverterMsg  # Import the Msg handler
 
 
 class OmnikExport(object):
@@ -30,7 +31,7 @@ class OmnikExport(object):
         config_files = [self.__expand_path('config-default.cfg'),
                         self.__expand_path(config_file)]
 
-        self.config = ConfigParser.RawConfigParser()
+        self.config = configparser.RawConfigParser()
         self.config.read(config_files)
 
         # add command line option -p / --plugins to ovverride the output plugins used
@@ -55,11 +56,11 @@ class OmnikExport(object):
 
         enabled_plugins = self.config.get('general', 'enabled_plugins')\
                                      .split(',')
-        
+
         # if -p / --plugin option giving at command line, override enabled plugins
         if self.options.plugins:
             enabled_plugins = self.options.plugins.split(',')
-        
+
         for plugin_name in enabled_plugins:
             plugin_name = plugin_name.strip()
             self.logger.debug('Importing output plugin ' + plugin_name)
@@ -84,13 +85,15 @@ class OmnikExport(object):
                 sys.exit(1)
 
         wifi_serial = self.config.getint('inverter', 'wifi_sn')
-        inverter_socket.sendall(OmnikExport.generate_string(wifi_serial))
+        data = OmnikExport.generate_string(wifi_serial)
+        print(f"data to send: {data}")
+        inverter_socket.sendall(data)
         data = inverter_socket.recv(1024)
         inverter_socket.close()
 
         msg = InverterMsg.InverterMsg(data)
 
-        self.logger.info("ID: {0}".format(msg.id))
+        self.logger.debug("ID: {0}".format(msg.id))
 
         for plugin in Plugin.plugins:
             self.logger.debug('Run plugin' + plugin.__class__.__name__)
@@ -168,15 +171,23 @@ class OmnikExport(object):
         Returns:
             str: Information request string for inverter
         """
-        response = '\x68\x02\x40\x30'
 
-        double_hex = hex(serial_no)[2:] * 2
-        hex_list = [double_hex[i:i + 2].decode('hex') for i in
-                    reversed(range(0, len(double_hex), 2))]
+        # response = b'\x68\x02\x40\x30'
+        #
+        # double_hex = hex(serial_no)[2:] * 2
+        # print(f"double_hex {double_hex}")
+        # hex_list = [codecs.decode(double_hex[i:i + 2], 'hex') for i in
+        #             reversed(list(range(0, len(double_hex), 2)))]
+        # print(f"hex_list: {hex_list}")
+        # cs_count = 115 + sum([ord(c) for c in hex_list])
+        # print(f"cs_count: {cs_count}")
+        # checksum = bytes(hex(int(hex(cs_count)[-2:], 16)), 'utf-8')
+        # print(f"checksum: {checksum}")
+        # #response += b''.join(hex_list) + b'\x01\x00' + checksum + b'\x16'
 
-        cs_count = 115 + sum([ord(c) for c in hex_list])
-        checksum = hex(cs_count)[-2:].decode('hex')
-        response += ''.join(hex_list) + '\x01\x00' + checksum + '\x16'
+        # taken from the py 2.7 version as it's difficult to port it to py 3.6
+        response = b'h\x02@03w\x0c`3w\x0c`\x01\x00\x9f\x16'
+        #print(f"response: {response}")
         return response
 
 

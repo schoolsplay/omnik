@@ -4,7 +4,7 @@
 Get data from the omniksol inverter and output to console. This is a small
 utility program that just changes the config to output anything to console.
 """
-import OmnikExport
+from . import OmnikExport
 
 
 if __name__ == "__main__":

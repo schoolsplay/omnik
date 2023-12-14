@@ -172,21 +172,21 @@ class OmnikExport(object):
             str: Information request string for inverter
         """
 
-        # response = b'\x68\x02\x40\x30'
-        #
-        # double_hex = hex(serial_no)[2:] * 2
-        # print(f"double_hex {double_hex}")
-        # hex_list = [codecs.decode(double_hex[i:i + 2], 'hex') for i in
-        #             reversed(list(range(0, len(double_hex), 2)))]
-        # print(f"hex_list: {hex_list}")
-        # cs_count = 115 + sum([ord(c) for c in hex_list])
-        # print(f"cs_count: {cs_count}")
-        # checksum = bytes(hex(int(hex(cs_count)[-2:], 16)), 'utf-8')
-        # print(f"checksum: {checksum}")
-        # #response += b''.join(hex_list) + b'\x01\x00' + checksum + b'\x16'
+        response = b'\x68\x02\x40\x30'
+
+        double_hex = hex(serial_no)[2:] * 2
+        print(f"double_hex {double_hex}")
+        hex_list = [codecs.decode(double_hex[i:i + 2], 'hex') for i in
+                    reversed(list(range(0, len(double_hex), 2)))]
+        print(f"hex_list: {hex_list}")
+        cs_count = 115 + sum([ord(c) for c in hex_list])
+        print(f"cs_count: {cs_count}")
+        checksum = bytes(hex(int(hex(cs_count)[-2:], 16)), 'utf-8')
+        print(f"checksum: {checksum}")
+        response += b''.join(hex_list) + b'\x01' + checksum + b'\x16'
 
         # taken from the py 2.7 version as it's difficult to port it to py 3.6
-        response = b'h\x02@03w\x0c`3w\x0c`\x01\x00\x9f\x16'
+        # response = b'h\x02@03w\x0c`3w\x0c`\x01\x00\x9f\x16'
         #print(f"response: {response}")
         return response
 
